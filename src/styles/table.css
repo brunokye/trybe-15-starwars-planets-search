@@ -1,6 +1,11 @@
+.table-container {
+  display: flex;
+  justify-content: center;
+}
+
 table {
   border-collapse: collapse;
-  margin: 20px auto 0;
+  margin: 30px 20px;
 }
 
 td, th {
@@ -11,4 +16,11 @@ td, th {
 
 th {
   text-align: center;
+}
+
+.filter-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 30px;
 }
