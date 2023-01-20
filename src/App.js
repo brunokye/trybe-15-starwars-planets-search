@@ -1,9 +1,15 @@
-import React from 'react';
-import './App.css';
+import React, { useEffect } from 'react';
+import Table from './components/Table';
+import useFetch from './hooks/useFetch';
+import './styles/App.css';
 
 function App() {
+  const { isLoading } = useFetch();
+
   return (
-    <span>Hello, App!</span>
+    <>
+      { isLoading ? <p>Loading...</p> : <Table /> }
+    </>
   );
 }
 
