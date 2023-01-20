@@ -2,7 +2,7 @@ import useFetch from '../hooks/useFetch';
 import '../styles/table.css';
 
 export default function Table() {
-  const { planets } = useFetch();
+  const { isLoading, planets } = useFetch();
 
   return (
     <table>
@@ -24,7 +24,7 @@ export default function Table() {
         </tr>
       </thead>
       <tbody>
-        { planets.map(({ name,
+        { isLoading ? <tr><td>Loading...</td></tr> : planets.map(({ name,
           rotation_period: rotation,
           orbital_period: orbital,
           diameter,

@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
+import PlanetsContext from '../context/PlanetsContext';
 
 export default function useFetch() {
-  const [isLoading, setLoading] = useState(false);
-  const [planets, setPlanets] = useState([]);
+  const { isLoading, setLoading, planets,
+    setPlanets, search, setSearch } = useContext(PlanetsContext);
 
   useEffect(() => {
     setLoading(true);
@@ -16,6 +17,7 @@ export default function useFetch() {
         delete data.RESIDENTS;
 
         setPlanets(data.results);
+        setSearch(data.results);
         setLoading(false);
       } catch (error) {
         setLoading(false);
@@ -26,5 +28,5 @@ export default function useFetch() {
     requestApi();
   }, []);
 
-  return { isLoading, planets };
+  return { isLoading, planets, search };
 }

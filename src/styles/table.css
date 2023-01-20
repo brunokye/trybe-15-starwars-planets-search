@@ -1,6 +1,6 @@
 table {
   border-collapse: collapse;
-  margin: 20px;
+  margin: 20px auto 0;
 }
 
 td, th {
@@ -11,9 +11,4 @@ td, th {
 
 th {
   text-align: center;
-}
-
-.edit-delete {
-  display: flex;
-  gap: 10px;
 }

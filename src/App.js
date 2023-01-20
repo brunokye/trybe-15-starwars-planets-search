@@ -1,15 +1,14 @@
-import React, { useEffect } from 'react';
+import Header from './components/Header';
 import Table from './components/Table';
-import useFetch from './hooks/useFetch';
+import PlanetsProvider from './context/PlanetsProvider';
 import './styles/App.css';
 
 function App() {
-  const { isLoading } = useFetch();
-
   return (
-    <>
-      { isLoading ? <p>Loading...</p> : <Table /> }
-    </>
+    <PlanetsProvider>
+      <Header />
+      <Table />
+    </PlanetsProvider>
   );
 }
 
