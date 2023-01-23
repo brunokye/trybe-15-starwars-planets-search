@@ -26,7 +26,7 @@ export default function useFetch() {
     };
 
     requestApi();
-  }, []);
+  }, [setLoading, setPlanets, setSearch]);
 
   return { isLoading, planets, search };
 }
