@@ -3,24 +3,25 @@ import PlanetsContext from '../context/PlanetsContext';
 import '../styles/header.css';
 
 export default function Header() {
-  const { setPlanets, search, planets,
-    initialType, setInitialType } = useContext(PlanetsContext);
-  const [type] = useState(initialType);
+  const { planets, setPlanets, search,
+    initialTags, setInitialTags } = useContext(PlanetsContext);
+  const [tagList] = useState(initialTags);
   const [tag, setTag] = useState('population');
   const [operator, setOperator] = useState('maior que');
   const [number, setNumber] = useState(0);
   const [filters, setFilters] = useState([]);
+  const MAXIMUM_FILTERS = 5;
 
   useEffect(() => {
     if (filters.length > 0) {
-      const newFilter = type.filter((types) => (
-        !filters.map((filter) => filter.column).includes(types)
+      const unusedTags = tagList.filter((list) => (
+        !filters.map(({ column }) => column).includes(list)
       ));
 
-      setInitialType(newFilter);
-      setTag(newFilter[0]);
+      setInitialTags(unusedTags);
+      setTag(unusedTags[0]);
     }
-  }, [filters, type, setInitialType]);
+  }, [filters, tagList, setInitialTags]);
 
   const handleName = ({ target }) => {
     setPlanets(search.filter(({ name }) => (
@@ -43,34 +44,53 @@ export default function Header() {
     }]);
   };
 
+  const filterPlanets = (state, column, comparison, value) => {
+    if (comparison === 'maior que') {
+      return state.filter((planet) => (Number(planet[column]) > value));
+    }
+    if (comparison === 'menor que') {
+      return state.filter((planet) => (Number(planet[column]) < value));
+    }
+    return state.filter((planet) => (Number(planet[column] === value)));
+  };
+
   const applyFilter = () => {
     saveFilters();
-
-    if (operator === 'maior que') {
-      return setPlanets(search
-        .filter((planet) => (Number(planet[tag]) > number)));
-    }
-    if (operator === 'menor que') {
-      return setPlanets(search
-        .filter((planet) => (Number(planet[tag]) < number)));
-    }
-    return setPlanets(search
-      .filter((planet) => (Number(planet[tag] === number))));
+    setPlanets(filterPlanets(search, tag, operator, number));
   };
 
   const applyMultipleFilters = () => {
     saveFilters();
+    setPlanets(filterPlanets(planets, tag, operator, number));
+  };
 
-    if (operator === 'maior que') {
-      return setPlanets(planets
-        .filter((planet) => (Number(planet[tag]) > number)));
+  const handleRemove = (column) => {
+    const filtersToKeep = filters.filter((filter) => filter.column !== column);
+    setFilters(filtersToKeep);
+    setInitialTags([...initialTags, column]);
+
+    let filteredPlanets = search;
+
+    if (filtersToKeep.length > 0) {
+      filtersToKeep.forEach(({ column: tagType, comparasion, value }) => {
+        filteredPlanets = filterPlanets(filteredPlanets, tagType, comparasion, value);
+      });
     }
-    if (operator === 'menor que') {
-      return setPlanets(planets
-        .filter((planet) => (Number(planet[tag]) < number)));
-    }
-    return setPlanets(planets
-      .filter((planet) => (Number(planet[tag] === number))));
+    setPlanets(filteredPlanets);
+  };
+
+  const handleClear = () => {
+    setFilters([]);
+    setPlanets(search);
+    setTag('population');
+    setOperator('maior que');
+    setNumber(0);
+    setInitialTags(['population',
+      'orbital_period',
+      'diameter',
+      'rotation_period',
+      'surface_water',
+    ]);
   };
 
   return (
@@ -89,16 +109,18 @@ export default function Header() {
         <select
           data-testid="column-filter"
           name="tag"
+          value={ tag }
           onChange={ handleFilter }
         >
-          { initialType.map((filter) => (
-            <option key={ filter } value={ filter }>{ filter }</option>
+          { initialTags.map((column) => (
+            <option key={ column } value={ column }>{ column }</option>
           ))}
         </select>
 
         <select
           data-testid="comparison-filter"
           name="operator"
+          value={ operator }
           onChange={ handleFilter }
         >
           <option value="maior que">maior que</option>
@@ -107,8 +129,8 @@ export default function Header() {
         </select>
 
         <input
-          type="number"
           data-testid="value-filter"
+          type="number"
           name="number"
           value={ number }
           onChange={ handleFilter }
@@ -117,19 +139,34 @@ export default function Header() {
         <button
           type="button"
           data-testid="button-filter"
+          disabled={ initialTags.length === 0 }
           onClick={ filters.length === 0 ? applyFilter : applyMultipleFilters }
         >
           Filtrar
+        </button>
+
+        <button
+          type="button"
+          data-testid="button-remove-filters"
+          disabled={ initialTags.length === MAXIMUM_FILTERS }
+          onClick={ handleClear }
+        >
+          Remover Filtros
         </button>
       </div>
 
       <div className="filter-list-container">
         { filters.map(({ column, comparasion, value }) => (
-          <span className="align-filter-items" key={ column }>
+          <span
+            data-testid="filter"
+            className="align-filter-items"
+            key={ column }
+          >
             {`${column} | ${comparasion} | ${value}`}
             <button
               className="delete-filter"
               type="button"
+              onClick={ () => handleRemove(column) }
             >
               🗑
             </button>

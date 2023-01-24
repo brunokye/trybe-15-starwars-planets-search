@@ -6,7 +6,7 @@ export default function PlanetsProvider({ children }) {
   const [isLoading, setLoading] = useState(false);
   const [planets, setPlanets] = useState([]);
   const [search, setSearch] = useState([]);
-  const [initialType, setInitialType] = useState(['population', 'orbital_period',
+  const [initialTags, setInitialTags] = useState(['population', 'orbital_period',
     'diameter', 'rotation_period', 'surface_water']);
 
   const context = { isLoading,
@@ -15,8 +15,8 @@ export default function PlanetsProvider({ children }) {
     setPlanets,
     search,
     setSearch,
-    initialType,
-    setInitialType };
+    initialTags,
+    setInitialTags };
 
   return (
     <PlanetsContext.Provider value={ context }>
