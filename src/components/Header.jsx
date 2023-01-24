@@ -69,14 +69,14 @@ export default function Header() {
     setFilters(filtersToKeep);
     setInitialTags([...initialTags, column]);
 
-    let filteredPlanets = search;
+    let lastFilters = search;
 
     if (filtersToKeep.length > 0) {
       filtersToKeep.forEach(({ column: tagType, comparasion, value }) => {
-        filteredPlanets = filterPlanets(filteredPlanets, tagType, comparasion, value);
+        lastFilters = filterPlanets(lastFilters, tagType, comparasion, value);
       });
     }
-    setPlanets(filteredPlanets);
+    setPlanets(lastFilters);
   };
 
   const handleClear = () => {
@@ -137,8 +137,8 @@ export default function Header() {
         />
 
         <button
-          type="button"
           data-testid="button-filter"
+          type="button"
           disabled={ initialTags.length === 0 }
           onClick={ filters.length === 0 ? applyFilter : applyMultipleFilters }
         >
@@ -146,8 +146,8 @@ export default function Header() {
         </button>
 
         <button
-          type="button"
           data-testid="button-remove-filters"
+          type="button"
           disabled={ initialTags.length === MAXIMUM_FILTERS }
           onClick={ handleClear }
         >
